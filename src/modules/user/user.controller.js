@@ -3,7 +3,7 @@ import { ApiError } from "../../core/utils/api-error.js";
 import { ApiResponse } from "../../core/utils/api-response.js";
 import { asyncHandler } from "../../core/utils/async-handler.js";
 import S3UploadHelper from "../../shared/helpers/s3Upload.js";
-import User from "../../models/User.model.js";
+import User from "../../models/user.model.js";
 import { updateUserSchema } from "../../shared/validators/auth.validators.js";
 import Store from "../../models/store/Store.model.js";
 import { deleteStore } from "../store/store.controller.js";
