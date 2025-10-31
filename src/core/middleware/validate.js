@@ -5,13 +5,9 @@ import { ZodError } from "zod";
 const validate = (schema) =>
   asyncHandler(async (req, res, next) => {
     try {
-      // 🚨 Check if request body exists
-      if (!req.body || typeof req.body !== "object") {
-        throw new ApiError(400, "Invalid input: expected object, received undefined");
-      }
-
       // 🧩 Handle single or multiple schema validation
       if (schema?.safeParse) {
+
         schema.parse(req.body);
       } else {
         if (schema?.body) schema.body.parse(req.body);
@@ -22,6 +18,7 @@ const validate = (schema) =>
       next();
     } catch (error) {
       if (error instanceof ZodError) {
+        // ✅ Handle both .issues and .errors arrays safely
         const zodErrors = error.issues || error.errors || [];
 
         const formattedErrors = zodErrors.map((err) => ({
@@ -32,6 +29,7 @@ const validate = (schema) =>
         throw new ApiError(400, "Validation failed", formattedErrors);
       }
 
+      // 🔥 Unexpected validation errors
       console.error("Unexpected validation error:", error);
       throw new ApiError(500, "Unexpected validation error", [
         { message: error.message },

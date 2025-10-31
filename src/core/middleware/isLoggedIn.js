@@ -1,31 +1,30 @@
-import { asyncHandler } from "../utils/async-handler.js";
 import { ApiError } from "../utils/api-error.js";
+import { asyncHandler } from "../utils/async-handler.js";
 import jwt from "jsonwebtoken";
 
 const isLoggedIn = asyncHandler(async (req, res, next) => {
-  let accessToken;
+  // Check both possible tokens
+  const accessToken =
+    req.cookies.userAccessToken || req.cookies.adminAccessToken;
 
-  // ✅ Check cookies safely (requires cookie-parser)
-  if (req.cookies && req.cookies.accessToken) {
-    accessToken = req.cookies.accessToken;
-  }
-
-  // ✅ Also allow token from Authorization header (useful for Postman / frontend APIs)
-  else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
-    accessToken = req.headers.authorization.split(" ")[1];
-  }
-
-  // ❌ No token found
   if (!accessToken) {
-    throw new ApiError(401, "Unauthorized: No access token provided");
+    throw new ApiError(401, "Unauthorized — no access token found");
   }
 
   try {
-    const decodedAccessToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+    // Verify JWT
+    const decodedAccessToken = jwt.verify(
+      accessToken,
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    // Attach user info to request
     req.user = decodedAccessToken;
+    // Optional: also tag whether it's an admin or user token
+    // req.userRole = req.cookies.adminAccessToken ? "admin" : "user";
     next();
   } catch (error) {
-    throw new ApiError(401, "Invalid or expired access token");
+    console.error("Token verification failed:", error.message);
+    throw new ApiError(401, "Invalid or expired token");
   }
 });
 
