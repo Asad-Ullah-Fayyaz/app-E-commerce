@@ -9,7 +9,7 @@ import {
   getUserProfile,
   deleteUser,
 } from "../../modules/user/user.controller.js";
-import { isLoggedIn } from "../../core/middleware/isLoggedin.js";
+import { isLoggedIn } from "../../core/middleware/isLoggedIn.js";
 import { authorizeRoles } from "../../core/middleware/authorizeRoles.js";
 
 const router = express.Router();

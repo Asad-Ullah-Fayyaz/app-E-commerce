@@ -1,6 +1,6 @@
 import Router from "express";
 import { validate } from "../../core/middleware/validate.js";
-import { isLoggedIn } from "../../core/middleware/isLoggedin.js";
+import { isLoggedIn } from "../../core/middleware/isLoggedIn.js";
 import {
   createFactoryTransaction,
   getAllFactoryTransactions,
